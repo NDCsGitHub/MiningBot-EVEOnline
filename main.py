@@ -9,11 +9,8 @@ from Utils import GeneralUtility as gu
 # function screenshot creation and run code
 def MiningBot():
 
-    # locate undock, click, and wait for 8 seconds
-    gu.locatePosition('click', 'Undock', 'undock', 8, 0.7)
-
-    # pyautogui.keyDown('l')
-    time.sleep(5)
+    # locate undock
+    gu.locatePosition('click', 'Undock', 'undock', 13, 0.7)
 
     # locate mining position
     gu.locatePosition('rightClick', 'Locate Mine', 'miningLocation', 5, 0.5 )

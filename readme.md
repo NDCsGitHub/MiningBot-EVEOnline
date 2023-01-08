@@ -1,5 +1,3 @@
-
-
 Requirements - screen setup
 
 Locations menu
