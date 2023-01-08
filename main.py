@@ -26,13 +26,6 @@ with open('resources/keybinding.yaml', 'r') as yamlfile:
 
 # function screenshot creation and run code
 def createScreenshot():
-    # take screenshot and save it
-    image = pyautogui.screenshot(region = (0, 0, screenWidth,screenHeight+25 ))
-    image.save(r"C:\Users\MonkeyKing 2\Desktop\AutoMiningEVE\screenshots\1.png")
-
-    #cv2 process image
-    # image = cv2.cvtColor(numpy.array(image),0)
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # pos returns coordinates left top width height, find match with confidence 0.5
     # pos = pyautogui.locateOnScreen("resources/undock.png", grayscale=True, confidence=.5)
@@ -61,27 +54,83 @@ def createScreenshot():
 
 
     # start mining
-    pos = pyautogui.locateOnScreen("resources/closestOre.png", grayscale=True, confidence=0.3)
-    print(pos)
-    pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2+30)
-    pyautogui.doubleClick()
-    time.sleep(3)
-    pyautogui.hotkey('ctrl')
-    time.sleep(3)
-    pyautogui.hotkey('f2')
+    # pos = pyautogui.locateOnScreen("resources/closestOre.png", grayscale=True, confidence=0.3)
+    # print(pos)
+    # pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2+30)
+    # pyautogui.doubleClick()
+    # time.sleep(3)
+    # pyautogui.hotkey('ctrl')
+    # time.sleep(3)
+    # pyautogui.hotkey('f2')
 
 
     # wait until bag full
- 
     while(1):
-        time.sleep(0.5)
-        pos = pyautogui.locateOnScreen("resources/CargoFull.png", grayscale=True, confidence=0.3)
-        print(pos)
-        if (pos != 'None'):
-            print(strftime("%H:%M:%S", gmtime()), "Full")
-        break
+        # time.sleep(0.5)
+        # print('waiting for full')
+        # CargoFull = pyautogui.locateOnScreen("resources/CargoFull.png", grayscale=True, confidence=0.4)
+        # print(CargoFull)
+
+        # if CargoFull is not None:
+        #     print(strftime("%H:%M:%S", gmtime()), "Full")
+
+        #     #  open location
+        #     time.sleep(2)
+        #     pyautogui.keyDown('l')
+        #     time.sleep(1)
+        #     pos = pyautogui.locateOnScreen("resources/home.png", grayscale=True, confidence=0.8)
+        #     print(pos)
+        #     pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
+        #     pyautogui.rightClick()
+            
+        #     # checks for dock
+        #     time.sleep(1)
+        #     pos = pyautogui.locateOnScreen("resources/dockToHome.png", grayscale=True, confidence=0.5)
+        #     print(pos)
+        #     pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
+        #     pyautogui.leftClick()
+
 
     
+
+            # check if at base
+            while(1):
+                time.sleep(1)
+                returned = pyautogui.locateOnScreen("resources/undock.png", grayscale=True, confidence=.5)
+                print(returned)
+                if returned is not None:
+                    print(strftime("%H:%M:%S", gmtime()), "Returned to Base")
+                    pyautogui.keyDown('alt')
+                    pyautogui.press('c')
+                    pyautogui.keyUp('alt')
+                    time.sleep(1)
+                    # look for ore
+                    ore = pyautogui.locateOnScreen("resources/ore.png", grayscale=True, confidence=.65)
+                    print(ore)
+                    time.sleep(1)
+                    pyautogui.moveTo(ore[0]+ore[2]/2, ore[1]+ore[3]/2)
+                    pyautogui.mouseDown(button='left')
+                    time.sleep(1)
+                    pyautogui.moveTo(ore[0]+50, ore[1]+50)
+                    time.sleep(0.5)
+                    pyautogui.keyDown('alt')
+                    pyautogui.press('g')
+                    pyautogui.keyUp('alt')
+                    time.sleep(1)
+                    pyautogui.mouseUp(button='left')
+                    
+                    # close hangar and inventory
+                    pyautogui.keyDown('alt')
+                    pyautogui.press('g')
+                    pyautogui.keyUp('alt')
+
+                    pyautogui.keyDown('alt')
+                    pyautogui.press('c')
+                    pyautogui.keyUp('alt')
+                    time.sleep(1)
+        
+                    break
+            break
 
 
 
