@@ -23,7 +23,6 @@ def locatePosition(mode, purpose, imageName, sleepTime, confidence):
 
 def checkCondition(condition, imageName, confidence):
     time.sleep(1)
-    print(strftime("%H:%M:%S", gmtime()), f'{condition}')
     conditionImageLocation = pyautogui.locateOnScreen(f"resources/{imageName}.png", grayscale=True, confidence=confidence)
 
     if conditionImageLocation is not None:
