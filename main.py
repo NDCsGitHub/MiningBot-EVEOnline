@@ -1,136 +1,96 @@
-# https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
-
-# game running in 1600x900 window
-
-import numpy
 import pyautogui
-import cv2
 import time
 from time import gmtime, strftime
-import random
 import win32gui
-import yaml
-
-
-# screen resolution
-screenWidth = 1600
-screenHeight = 900
-
-# keybindings 
-with open('resources/keybinding.yaml', 'r') as yamlfile:
-    keybindings = yaml.safe_load(yamlfile)
-
-# variables
-
+import Utils
+from Utils import GeneralUtility as gu
 
 
 # function screenshot creation and run code
-def createScreenshot():
+def MiningBot():
 
-    # pos returns coordinates left top width height, find match with confidence 0.5
-    # pos = pyautogui.locateOnScreen("resources/undock.png", grayscale=True, confidence=.5)
-    # print(pos)
-    # pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
-    # pyautogui.click()
+    # locate undock, click, and wait for 8 seconds
+    gu.locatePosition('click', 'Undock', 'undock', 8, 0.7)
 
-    time.sleep(5)
-    
-    # open location
     # pyautogui.keyDown('l')
-    # time.sleep(1)
-    # pos = pyautogui.locateOnScreen("resources/miningLocation.png", grayscale=True, confidence=0.5)
-    # print(pos)
-    # pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
-    # pyautogui.rightClick()
+    time.sleep(5)
 
-    # # warp to location
-    # pos = pyautogui.locateOnScreen("resources/warpToLocation.png", grayscale=True, confidence=0.5)
-    # print(pos)
-    # pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
-    # pyautogui.click()
+    # locate mining position
+    gu.locatePosition('rightClick', 'Locate Mine', 'miningLocation', 5, 0.5 )
 
-    # time.sleep(20)
-
-
+    # warp to minging location
+    gu.locatePosition('click', 'Warp To Mining Location', 'warpToLocation', 50, 0.5 )
 
     # start mining
-    # pos = pyautogui.locateOnScreen("resources/closestOre.png", grayscale=True, confidence=0.3)
-    # print(pos)
-    # pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2+30)
-    # pyautogui.doubleClick()
-    # time.sleep(3)
-    # pyautogui.hotkey('ctrl')
-    # time.sleep(3)
-    # pyautogui.hotkey('f2')
+    gu.locatePosition('doubleClick', 'Start Mining', 'closestOre', 5, 0.3)
+    time.sleep(10)
+    pyautogui.hotkey('ctrl')
+    time.sleep(3)
+    pyautogui.hotkey('f2')
 
-
-    # wait until bag full
+    # check for condition for full inventory
     while(1):
-        # time.sleep(0.5)
-        # print('waiting for full')
-        # CargoFull = pyautogui.locateOnScreen("resources/CargoFull.png", grayscale=True, confidence=0.4)
-        # print(CargoFull)
-
-        # if CargoFull is not None:
-        #     print(strftime("%H:%M:%S", gmtime()), "Full")
-
-        #     #  open location
-        #     time.sleep(2)
-        #     pyautogui.keyDown('l')
-        #     time.sleep(1)
-        #     pos = pyautogui.locateOnScreen("resources/home.png", grayscale=True, confidence=0.8)
-        #     print(pos)
-        #     pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
-        #     pyautogui.rightClick()
+        while(1):
+            if gu.checkCondition('Wait for Full Inventory', 'CargoFull', 0.4) != 'Condition not met':
+                time.sleep(2)
+                gu.locatePosition('rightClick', 'Locate Home', 'home', 2, 0.8 )
+                gu.locatePosition('click', 'Dock to Home', 'dockToHome', 2 ,0.5)
+                break
             
-        #     # checks for dock
-        #     time.sleep(1)
-        #     pos = pyautogui.locateOnScreen("resources/dockToHome.png", grayscale=True, confidence=0.5)
-        #     print(pos)
-        #     pyautogui.moveTo(pos[0]+pos[2]/2, pos[1]+pos[3]/2)
-        #     pyautogui.leftClick()
+        #check for condition if arrive at base
+        while(1):
+            time.sleep(1)
+            if gu.checkCondition('Wait for Arrive at Base', 'undock', 0.5) != 'Condition not met':
+                print(strftime("%H:%M:%S", gmtime()), 'Returned to base')
+                pyautogui.keyDown('alt')
+                pyautogui.press('c')
+                pyautogui.keyUp('alt')
+                time.sleep(2)
 
-
-    
-
-            # check if at base
-            while(1):
+                ore = pyautogui.locateOnScreen("resources/ore.png", grayscale=True, confidence=.6)
+                print(ore)
+                time.sleep(2)
+                pyautogui.moveTo(ore[0]+ore[2]/2, ore[1]+ore[3]/2)
+                pyautogui.mouseDown(button='left')
                 time.sleep(1)
-                returned = pyautogui.locateOnScreen("resources/undock.png", grayscale=True, confidence=.5)
-                print(returned)
-                if returned is not None:
-                    print(strftime("%H:%M:%S", gmtime()), "Returned to Base")
-                    pyautogui.keyDown('alt')
-                    pyautogui.press('c')
-                    pyautogui.keyUp('alt')
-                    time.sleep(1)
-                    # look for ore
-                    ore = pyautogui.locateOnScreen("resources/ore.png", grayscale=True, confidence=.65)
-                    print(ore)
-                    time.sleep(1)
-                    pyautogui.moveTo(ore[0]+ore[2]/2, ore[1]+ore[3]/2)
-                    pyautogui.mouseDown(button='left')
-                    time.sleep(1)
-                    pyautogui.moveTo(ore[0]+50, ore[1]+50)
-                    time.sleep(0.5)
-                    pyautogui.keyDown('alt')
-                    pyautogui.press('g')
-                    pyautogui.keyUp('alt')
-                    time.sleep(1)
-                    pyautogui.mouseUp(button='left')
-                    
-                    # close hangar and inventory
-                    pyautogui.keyDown('alt')
-                    pyautogui.press('g')
-                    pyautogui.keyUp('alt')
+                pyautogui.moveTo(ore[0]+50, ore[1]+50)
+                time.sleep(0.5)
+                pyautogui.keyDown('alt')
+                pyautogui.press('g')
+                pyautogui.keyUp('alt')
+                time.sleep(1)
+                pyautogui.mouseUp(button='left')
+                # close hangar and inventory
+                pyautogui.keyDown('alt')
+                pyautogui.press('g')
+                pyautogui.keyUp('alt')
 
-                    pyautogui.keyDown('alt')
-                    pyautogui.press('c')
-                    pyautogui.keyUp('alt')
-                    time.sleep(1)
-        
-                    break
-            break
+                pyautogui.keyDown('alt')
+                pyautogui.press('c')
+                pyautogui.keyUp('alt')
+                time.sleep(1)
+    
+                break
+        break
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -139,35 +99,12 @@ def createScreenshot():
 
 
 # run script
-time.sleep(2)
-print(strftime("%H:%M:%S", gmtime())),
-createScreenshot()
+count = 0
+while(1):
+    count+=count
+    time.sleep(5)
+    print(strftime("%H:%M:%S", gmtime()), f'Running Count:{count}')
+    MiningBot()
 
 
 
-
-
-
-# open resourceMenu alt-m / undock under air cv-image undock
-# cv-image undock
-# sleep
-# close resourceMenu alt-m
-# open locaiton menu L
-# cv-image mining location
-# right click warp to 0 - left click
-
-# mouse move to 1st mining site - left click
-# cv-image lockTargetIcon - left click\
-# f2 start mining
-
-# cv-image scan for CargoFull
-# open location
-# cv-image home or mouse location - right click dock - left click
-# sleep / or cv-image dockedConfirmation
-
-# alt-c 
-# mouse drag location
-# open item hangar alt-g
-# mouse drag location - right click sell
-# cv-image sellButton -left click
-# close alt-g alt-c
